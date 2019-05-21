@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.mapper.BoardMapper">
+
+<select id="getSeqBoardNum" resultType="int">
+	SELECT seq_board.nextval FROM dual
+</select>
+
+<insert id="insertBoard">
+<!-- 	<selectKey order="BEFORE" resultType="int" keyProperty="num"> -->
+<!-- 		SELECT seq_board.nextval FROM dual -->
+<!-- 	</selectKey> -->
+	INSERT INTO board 
+	(num, name, pass, subject, content, re_ref, re_lev, re_seq, readCount, reg_date, ip) 
+	VALUES (#{num}, #{name}, #{pass}, #{subject}, #{content}, #{reRef}, #{reLev}, #{reSeq}, 0, CURRENT_TIMESTAMP, #{ip})
+</insert>
+
+<select id="getBoards" resultType="boardVO">
+SELECT a.*
+FROM
+    (SELECT ROWNUM AS rnum, a.*
+    FROM 
+        (SELECT * FROM board
+        <where>
+		<if test="search != null and search != ''">
+		subject LIKE '%'||#{search}||'%' OR content LIKE '%'||#{search}||'%'
+		</if>
+		</where>
+		<![CDATA[
+        ORDER BY re_ref DESC, re_seq ASC) a
+    WHERE rownum <=  #{pageNum} * #{amount}) a
+WHERE a.rnum > (#{pageNum} - 1) * #{amount}
+]]>
+</select>
+
+<select id="getBoardCount" resultType="int">
+	SELECT COUNT(*) FROM board
+	<where>
+		<if test="search != null and search != ''">
+		subject LIKE '%' || #{search} || '%' OR content LIKE '%' || #{search} || '%'
+		</if>
+	</where>
+</select>
+
+<update id="updateReadCount">
+	UPDATE board 
+	SET readcount = readcount + 1 
+	WHERE num = #{num}
+</update>
+
+<select id="getBoard" resultType="boardVO">
+	SELECT * FROM board WHERE num = #{num}
+</select>
+
+<update id="updateBoard">
+	UPDATE board
+	SET subject = #{subject}, pass = #{pass}, content = #{content}
+	WHERE num = #{num}
+</update>
+
+<delete id="deleteBoard">
+	DELETE FROM board WHERE num = #{num}
+</delete>
+
+<update id="updateReplyGroupSeq">
+	UPDATE board SET re_seq = re_seq + 1
+	WHERE re_ref = #{reRef} AND re_seq > #{reSeq}
+</update>
+
+
+
+
+
+</mapper>

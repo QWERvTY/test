@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.mapper.MemberMapper">
+
+<insert id="insert">
+	INSERT INTO member (id, password, name, email, address, reg_date, gender)
+	VALUES (#{id}, #{password}, #{name}, #{email}, #{address}, CURRENT_TIMESTAMP, #{gender})
+</insert>
+
+<select id="getAllMembers" resultType="memberVO">
+	SELECT * FROM member ORDER BY id
+</select>
+
+<select id="getMemberById" resultType="memberVO">
+	SELECT * FROM member WHERE id = #{id}
+</select>
+
+<delete id="delete">
+	DELETE FROM member WHERE id = #{id}
+</delete>
+
+<update id="update">
+	UPDATE member SET password = #{password}, name = #{name} WHERE id = #{id}
+</update>
+	
+<select id="countById" resultType="_int">
+	SELECT COUNT(*) FROM member WHERE id = #{id}
+</select>
+
+
+</mapper>
