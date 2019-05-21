@@ -26,7 +26,28 @@
 				return false;
 			}
 
-			// 		return false;
+			strResDate = strResDate.replace('T', ' ');
+			$('#datetime').val(strResDate);
+			
+			var time = $('input:radio[name="time"]:checked').val();
+			var number = $('input[name="interval"]').val();
+			alert(time + " : " + number);
+			
+			var period = 0;
+			if (time == 'second') {
+				period = 1000 * number;
+			} else if (time == 'minute') {
+				period = 1000 * 60 * number;
+			} else if (time == 'hour') {
+				period = 1000 * 60 * 60 * number;
+			} else if (time == 'date') {
+				period = 1000 * 60 * 60 * 24 * number;
+			}
+			alert(period);
+			
+			$('input#period').val(period);
+			console.log('period : ' + period);
+			
 // 			e.preventDefault();
 			return true;
 		});
@@ -50,10 +71,17 @@
 
 		<!-- 게시판 -->
 		<article>
-			<h1>배치 프로그램</h1>
+			<h1>배치 처리 예약하기</h1>
 			<form action="/batch/process" method="POST" id="frm">
-				예약 날짜 시간 : <input type="datetime-local" name="datetime"><br>
-				실행 간격(분) : <input type="number" min="0" name="period">
+				예약 날짜 시간 : <input type="datetime-local" name="datetime-local"><br><br>
+				<input type="hidden" name="datetime" id="datetime">
+				실행 간격(일/시간/분/초) 선택 : <br>
+				<input type="radio" name="time" value="date"> 일
+				<input type="radio" name="time" value="hour"> 시간
+				<input type="radio" name="time" value="minute"> 분
+				<input type="radio" name="time" value="second"> 초<br><br>
+				실행 간격 값 : <input type="number" min="0" name="interval">
+				<input type="hidden" name="period" id="period">
 				<button type="submit">예약하기</button>
 			</form>
 
